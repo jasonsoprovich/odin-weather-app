@@ -33,7 +33,7 @@ module.exports = (env, argv) => {
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, '../src/index.html'),
         inject: 'body',
-        title: 'title',
+        title: 'Weather App',
       }),
       ...(isProd
         ? [
