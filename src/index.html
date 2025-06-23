@@ -8,7 +8,36 @@
   </head>
 
   <body>
-    <div id="app">
+    <div id="app-container">
+      <div id="logo-container">logo placeholder</div>
+
+      <div id="location-lookup">
+        <form>
+          <label for="search-city">Enter City:</label>
+          <input
+            type="text"
+            id="search-city"
+            required
+            placeholder="Enter city name"
+          />
+          <button id="search-btn">Search</button>
+        </form>
+      </div>
+
+      <div id="city-container">
+        <h2 id="city-name"></h2>
+        <div id="datetime-info">
+          <span id="day-name"></span>| <span id="date"></span>|
+          <span id="time"></span>
+        </div>
+      </div>
+      <div id="weather-container">
+        <p id="location-name"></p>
+        <p id="current-time"></p>
+        <p id="current-date"></p>
+        <p id="current-temp"></p>
+      </div>
+
       <button id="units-btn"></button>
       <div id="location"></div>
     </div>

@@ -103,3 +103,7 @@ textarea:focus {
 ul {
   list-style: none;
 }
+
+div {
+  outline: blue 1px dashed;
+}
