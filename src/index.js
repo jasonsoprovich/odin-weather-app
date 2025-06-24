@@ -2,6 +2,10 @@ import './styles.css';
 
 const API_KEY = 'Q6F4VL97SCQY6LTMSQ5G22TJL';
 const currentUnits = 'metric';
+const appContainer = document.get('app-container');
+const cityCardsContainer = document.createElement('div');
+cityCardsContainer.id = 'city-cards-container';
+appContainer.appendChild(cityCardsContainer);
 
 const countryUnitMap = {
   US: 'us',
@@ -57,12 +61,12 @@ async function getWeatherData(locationName, units) {
     if (currentHourIndex !== -1) {
       for (let i = 1; i <= 2; i += 1) {
         if (currentHourIndex - i >= 0) {
-          previousHours.unshift(hours[currentHourIndex - 1].temp);
+          previousHours.unshift(hours[currentHourIndex - i].temp);
         }
       }
       for (let i = 1; i <= 2; i += 1) {
         if (currentHourIndex + i < hours.length) {
-          nextHours.push(hours[currentHourIndex + 1].temp);
+          nextHours.push(hours[currentHourIndex + i].temp);
         }
       }
     }
