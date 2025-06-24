@@ -209,6 +209,12 @@ function createCityCard(cityData) {
   console.log('Card created for: ', cityData.address);
 }
 
+function toggleCardFlip(cardElement) {
+  cardElement.classList.toggle('flipped');
+  cardElement.querySelector('.card-front').classList.toggle('hidden');
+  cardElement.querySelector('.card-back').classList.toggle('hidden');
+}
+
 async function toggleCardUnits(cardElement, cityId, oldUnits) {
   const newUnits = oldUnits === 'metric' ? 'us' : 'metric';
   console.log(
@@ -265,12 +271,6 @@ async function toggleCardUnits(cardElement, cityId, oldUnits) {
       { once: true }
     );
   }
-}
-
-function toggleCardFlip(cardElement) {
-  cardElement.classList.toggle('flipped');
-  cardElement.querySelector('.card-front').classList.toggle('hidden');
-  cardElement.querySelector('.card-back').classList.toggle('hidden');
 }
 
 const searchCityInput = document.getElementById('search-city');
