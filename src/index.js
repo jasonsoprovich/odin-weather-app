@@ -2,7 +2,7 @@ import './styles.css';
 
 const API_KEY = 'Q6F4VL97SCQY6LTMSQ5G22TJL';
 const currentUnits = 'metric';
-const appContainer = document.get('app-container');
+const appContainer = document.getElementById('app-container');
 const cityCardsContainer = document.createElement('div');
 cityCardsContainer.id = 'city-cards-container';
 appContainer.appendChild(cityCardsContainer);
