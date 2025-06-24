@@ -127,22 +127,151 @@ function formatDateTimeFromEpoch(epochSeconds, timezone) {
     }, {});
 }
 
-// function updateUnitsBtn() {
-//   const unitsBtn = document.getElementById('units-btn');
-//   if (unitsBtn) {
-//     unitsBtn.textContent = currentUnits === 'metric' ? 'C°' : 'F°';
-//   }
-// }
+function createCityCard(cityData) {
+  const cardElement = document.createElement('div');
+  cardElement.classList.add('city-card');
+  cardElement.setAttribute('data-city-id', cityData.id);
 
-// function toggleUnits() {
-//   currentUnits = currentUnits === 'metric' ? 'us' : 'metric';
-//   updateUnitsBtn();
-//   getWeatherData();
-//   console.log(`Units toggled to ${currentUnits}`);
-// }
+  const cardCurrentUnits = cityData.initialUnits;
 
-// const unitsBtn = document.getElementById('units-btn');
-// unitsBtn.addEventListener('click', toggleUnits);
+  const frontContent = `
+    <div class="card-inner card-front">
+      <div class="city-info">
+        <h2 class="city-name">${cityData.address}</h2>
+        <div class="datetime-info">
+          <span class="day-name"></span> | <span class="date"></span> | <span class="time"></span>
+        </div>
+      </div>
+       <div class="hourly-temps">
+          ${cityData.hourlyTemps.previous
+            .map(
+              (temp) => `<span class="hourly-temp">${Math.round(temp)}°</span>`
+            )
+            .join('')}
+          <span class="current-temp">${Math.round(
+            cityData.currentConditions.temp
+          )}°</span>
+          ${cityData.hourlyTemps.next
+            .map(
+              (temp) => `<span class="hourly-temp">${Math.round(temp)}°</span>`
+            )
+            .join('')}
+        </div>
+      </div>
+      <button class="card-units-toggle-btn" data-units="${cardCurrentUnits}"></button>
+    </div>
+    <div class="card-inner card-back hidden">
+      <h3>Detailed Info for ${cityData.address}</h3>
+      <p>Feels like: <span class="feels-like-temp">${Math.round(
+        cityData.currentConditions.feelsLike
+      )}°</span></p>
+      <p>Humidity: ${cityData.currentConditions.humidity}%</p>
+      <p>Wind Speed: ${cityData.currentConditions.windSpeed} ${
+    cardCurrentUnits === 'metric' ? 'km/h' : 'mph'
+  }</p>
+      <p>Conditions: ${cityData.currentConditions.conditions}</p>
+      <p>UV Index: ${cityData.currentConditions.uvIndex}</p>
+      <p>Precipitation Prob: ${cityData.currentConditions.precipProb}%</p>
+    </div>
+  `;
+
+  cardElement.innerHTML = frontContent;
+  cityCardsContainer.appendChild(cardElement);
+
+  const parts = formatDateTimeFromEpoch(
+    cityData.currentConditions.datetimeEpoch,
+    cityData.timezone
+  );
+
+  cardElement.querySelector('.day-name').textContent = parts.weekday;
+  cardElement.querySelector(
+    '.date'
+  ).textContent = `${parts.month} ${parts.day}`;
+  cardElement.querySelector(
+    '.time'
+  ).textContent = `${parts.hour}:${parts.minute} ${parts.dayPeriod}`;
+
+  const cardUnitsToggleBtn = cardElement.querySelector(
+    '.card-units-toggle-btn'
+  );
+
+  if (cardUnitsToggleBtn) {
+    cardUnitsToggleBtn.textContent =
+      cardCurrentUnits === 'metric' ? 'C°' : 'F°';
+    cardUnitsToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleCardUnits(cardElement, cityData.id, cardCurrentUnits);
+    });
+  }
+
+  cardElement.addEventListener('click', () => toggleCardFlip(cardElement));
+
+  console.log('Card created for: ', cityData.address);
+}
+
+async function toggleCardUnits(cardElement, cityId, oldUnits) {
+  const newUnits = oldUnits === 'metric' ? 'us' : 'metric';
+  console.log(
+    `Toggling units for card ID: ${cityId} from ${oldUnits} to ${newUnits}`
+  );
+
+  const originalCityName = cardElement.querySelector('.city-name').textContent;
+
+  const updatedCityData = await getWeatherData(originalCityName, newUnits);
+  if (updatedCityData) {
+    updatedCityData.id = cityId;
+
+    const cardUnitsToggleBtn = cardElement.querySelector(
+      '.card-units-toggle-btn'
+    );
+    cardUnitsToggleBtn.setAttribute('data-units', newUnits);
+    cardUnitsToggleBtn.textContent = newUnits === 'metric' ? 'C°' : 'F°';
+
+    cardElement.querySelector('.current-temp').textContent = `${Math.round(
+      updatedCityData.currentConditions.temp
+    )}°`;
+    cardElement.querySelector(
+      '.hourly-temps'
+    ).innerHTML = `${updatedCityData.hourlyTemps.previous
+      .map((temp) => `<span class="hourly-temp">${Math.round(temp)}°</span>`)
+      .join('')}
+      <span class="current-temp">${Math.round(
+        updatedCityData.currentConditions.temp
+      )}°</span>
+      ${updatedCityData.hourlyTemps.next
+        .map((temp) => `<span class="hourly-temp">${Math.round(temp)}°</span>`)
+        .join('')}`;
+
+    const backContentElement = cardElement.querySelector('.card-back');
+    if (backContentElement) {
+      backContentElement.querySelector(
+        '.feels-like-temp'
+      ).textContent = `${Math.round(
+        updatedCityData.currentConditions.feelsLike
+      )}°`;
+      backContentElement.querySelector(
+        'p:nth-child(3)'
+      ).textContent = `Wind Speed: ${
+        updatedCityData.currentConditions.windSpeed
+      } ${newUnits === 'metric' ? 'km/h' : 'mph'}`;
+    }
+
+    cardUnitsToggleBtn.addEventListener(
+      'click',
+      (event) => {
+        event.stopPropagation();
+        toggleCardUnits(cardElement, cityId, newUnits);
+      },
+      { once: true }
+    );
+  }
+}
+
+function toggleCardFlip(cardElement) {
+  cardElement.classList.toggle('flipped');
+  cardElement.querySelector('.card-front').classList.toggle('hidden');
+  cardElement.querySelector('.card-back').classList.toggle('hidden');
+}
 
 const searchCityInput = document.getElementById('search-city');
 const searchButton = document.getElementById('search-btn');
@@ -150,6 +279,7 @@ const searchButton = document.getElementById('search-btn');
 searchButton.addEventListener('click', async (e) => {
   e.preventDefault();
   const cityName = searchCityInput.value.trim();
+
   if (cityName) {
     const cityData = await getWeatherData(cityName, currentUnits);
     if (cityData) {
@@ -170,27 +300,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     createCityCard(cityData);
   }
 });
-
-// async function displayCityCard() {
-//   const data = await getWeatherData('Edmonton', 'us');
-//   if (!data) return;
-
-//   const parts = formatDateTimeFromEpoch(
-//     data.currentConditions.datetimeEpoch,
-//     data.timezone
-//   );
-
-//   document.getElementById('city-name').textContent = data.address;
-//   document.getElementById('day-name').textContent = parts.weekday;
-//   document.getElementById('date').textContent = `${parts.month} ${parts.day}`;
-//   document.getElementById(
-//     'time'
-//   ).textContent = `${parts.hour}:${parts.minute} ${parts.dayPeriod}`;
-//   document.getElementById(
-//     'current-temp'
-//   ).textContent = `${data.currentConditions.temp}°`;
-// }
-
-// updateUnitsBtn();
-// getData();
-// displayCityCard();
