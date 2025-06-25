@@ -8,24 +8,26 @@
   </head>
 
   <body>
-    <div id="app-container">
-      <div id="logo-container">logo placeholder</div>
-
-      <div id="location-lookup">
-        <form>
-          <label for="search-city">Enter City:</label>
-          <input
-            type="text"
-            id="search-city"
-            required
-            placeholder="Enter city name"
-          />
-          <button id="search-btn">Search</button>
-          <button type="button" id="global-units-btn">C°</button>
-        </form>
+    <!-- Header section with logo and search -->
+    <div class="header-section">
+      <div class="logo-section">
+        <h1>logo placeholder</h1>
       </div>
 
-      <div id="city-cards-container"></div>
+      <div class="search-section">
+        <label for="search-city">Enter City:</label>
+        <input
+          type="text"
+          id="search-city"
+          required
+          placeholder="Enter city name"
+        />
+        <button id="search-btn">Search</button>
+        <button type="button" id="global-units-btn">C°</button>
+      </div>
     </div>
+
+    <!-- Cards container -->
+    <div id="city-cards-container"></div>
   </body>
 </html>

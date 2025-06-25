@@ -31,8 +31,9 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 1rem;
+  align-items: stretch;
+  padding: 1rem 0;
+  background-color: var(--color-bg);
 }
 
 .container {
@@ -100,17 +101,58 @@ ul {
   list-style: none;
 }
 
+/* Header section styling */
+.header-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 0 20px;
+}
+
+.logo-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.search-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.search-section label {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.search-section input {
+  min-width: 200px;
+  padding: 8px 12px;
+}
+
+.search-section button {
+  padding: 8px 16px;
+  white-space: nowrap;
+}
+
 /* Card grid layout */
 #city-cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, 350px);
   gap: 20px;
-  padding: 20px;
+  padding: 0 20px 20px 20px;
   max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
+  justify-content: center;
 }
 
 .city-card {
+  width: 350px;
   height: 500px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -347,13 +389,31 @@ ul {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .header-section {
+    padding: 0 15px;
+    margin-bottom: 20px;
+  }
+
+  .search-section {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .search-section input {
+    min-width: 250px;
+  }
+
   #city-cards-container {
-    grid-template-columns: 1fr;
-    padding: 15px;
+    grid-template-columns: repeat(
+      auto-fit,
+      320px
+    ); /* Slightly smaller on tablets */
+    padding: 0 15px 15px 15px;
     gap: 15px;
   }
 
   .city-card {
+    width: 320px;
     height: 450px;
   }
 
@@ -398,8 +458,24 @@ ul {
 }
 
 @media (max-width: 480px) {
+  .search-section input {
+    min-width: 200px;
+  }
+
+  .header-section {
+    padding: 0 12px;
+  }
+
+  #city-cards-container {
+    grid-template-columns: 1fr;
+    padding: 0 12px 12px 12px;
+  }
+
   .city-card {
+    width: 100%;
+    max-width: 350px;
     height: 400px;
+    margin: 0 auto;
   }
 
   .current-temp {
