@@ -3,12 +3,15 @@ import './styles.css';
 const API_KEY = 'Q6F4VL97SCQY6LTMSQ5G22TJL';
 let currentUnits = 'metric';
 
-const appContainer = document.getElementById('app-container');
-const cityCardsContainer = document.createElement('div');
-cityCardsContainer.id = 'city-cards-container';
-appContainer.appendChild(cityCardsContainer);
+const cityCardsContainer = document.getElementById('city-cards-container');
 
-let displayedCities = [];
+const displayedCities = [];
+
+function toggleCardFlip(cardElement) {
+  cardElement.classList.toggle('flipped');
+  cardElement.querySelector('.card-front').classList.toggle('hidden');
+  cardElement.querySelector('.card-back').classList.toggle('hidden');
+}
 
 async function getWeatherData(locationName) {
   const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${locationName}?unitGroup=${currentUnits}&key=${API_KEY}&contentType=json&include=current,hours`;
@@ -16,10 +19,9 @@ async function getWeatherData(locationName) {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      console.error(
+      throw new Error(
         `Error fetching data for ${locationName}: ${response.status} ${response.statusText}`
       );
-      return null;
     }
     const data = await response.json();
 
@@ -89,13 +91,12 @@ async function getWeatherData(locationName) {
       })),
     };
   } catch (error) {
-    console.error(`Fetch error for ${locationName}:`, error);
     return null;
   }
 }
 
-function formatDateTimeFromEpoch(epochSeconds, timezone) {
-  const date = new Date(epochSeconds * 1000);
+function formatCurrentTimeFromTimezone(timezone) {
+  const now = new Date();
   const options = {
     weekday: 'long',
     month: 'short',
@@ -106,7 +107,7 @@ function formatDateTimeFromEpoch(epochSeconds, timezone) {
     timeZone: timezone,
   };
   return new Intl.DateTimeFormat('en-US', options)
-    .formatToParts(date)
+    .formatToParts(now)
     .reduce((acc, part) => {
       acc[part.type] = part.value;
       return acc;
@@ -118,6 +119,11 @@ function renderCityCard(cityData) {
     `.city-card[data-city-id="${cityData.id}"]`
   );
 
+  // Store flip state before re-rendering
+  const wasFlipped = cardElement
+    ? cardElement.classList.contains('flipped')
+    : false;
+
   if (!cardElement) {
     cardElement = document.createElement('div');
     cardElement.classList.add('city-card');
@@ -127,20 +133,21 @@ function renderCityCard(cityData) {
     cardElement.addEventListener('click', () => toggleCardFlip(cardElement));
   }
 
-  const parts = formatDateTimeFromEpoch(
-    cityData.currentConditions.datetimeEpoch,
-    cityData.timezone
-  );
+  // Get current time for the city's timezone
+  const currentParts = formatCurrentTimeFromTimezone(cityData.timezone);
+
+  // Extract just city name (remove country)
+  const cityName = cityData.address.split(',')[0].trim();
 
   const frontContent = `
     <div class="card-inner card-front">
       <div class="city-info">
-        <h2 class="city-name">${cityData.address}</h2>
+        <h2 class="city-name">${cityName}</h2>
         <div class="datetime-info">
-          <span class="day-name">${parts.weekday}</span> |
-          <span class="date">${parts.month} ${parts.day}</span> |
-          <span class="time">${parts.hour}:${parts.minute} ${
-    parts.dayPeriod
+          <span class="day-name">${currentParts.weekday}</span> |
+          <span class="date">${currentParts.month} ${currentParts.day}</span> |
+          <span class="time">${currentParts.hour}:${currentParts.minute} ${
+    currentParts.dayPeriod
   }</span>
         </div>
       </div>
@@ -148,7 +155,7 @@ function renderCityCard(cityData) {
         <div class="hourly-temps">
           ${cityData.hourlyTemps.previous
             .map(
-              (temp) => `<span class="hourly-temp">${Math.round(temp)}°</span>`
+              (temp) => `<span class="hourly-temp">${Math.round(temp)}</span>`
             )
             .join('')}
           <span class="current-temp">${Math.round(
@@ -156,16 +163,14 @@ function renderCityCard(cityData) {
           )}°</span>
           ${cityData.hourlyTemps.next
             .map(
-              (temp) => `<span class="hourly-temp">${Math.round(temp)}°</span>`
+              (temp) => `<span class="hourly-temp">${Math.round(temp)}</span>`
             )
             .join('')}
         </div>
       </div>
     </div>
-    <div class="card-inner card-back ${
-      cardElement.classList.contains('flipped') ? '' : 'hidden'
-    }">
-      <h3>Detailed Info for ${cityData.address}</h3>
+    <div class="card-inner card-back">
+      <h3>Detailed Info for ${cityName}</h3>
       <p>Feels like: <span class="feels-like-temp">${Math.round(
         cityData.currentConditions.feelsLike
       )}°</span></p>
@@ -175,27 +180,24 @@ function renderCityCard(cityData) {
   }</p>
       <p>Conditions: ${cityData.currentConditions.conditions}</p>
       <p>UV Index: ${cityData.currentConditions.uvIndex}</p>
-      <p>Precipitation Prob: ${cityData.currentConditions.precipProb}%</p>
+      <p>Precipitation Probability: ${
+        cityData.currentConditions.precipProb
+      }%</p>
     </div>
   `;
 
   cardElement.innerHTML = frontContent;
 
-  if (cardElement.classList.contains('flipped')) {
+  // Restore flip state
+  if (wasFlipped) {
+    cardElement.classList.add('flipped');
     cardElement.querySelector('.card-front').classList.add('hidden');
     cardElement.querySelector('.card-back').classList.remove('hidden');
   } else {
+    cardElement.classList.remove('flipped');
     cardElement.querySelector('.card-front').classList.remove('hidden');
     cardElement.querySelector('.card-back').classList.add('hidden');
   }
-
-  console.log('Card rendered/updated for:', cityData.address);
-}
-
-function toggleCardFlip(cardElement) {
-  cardElement.classList.toggle('flipped');
-  cardElement.querySelector('.card-front').classList.toggle('hidden');
-  cardElement.querySelector('.card-back').classList.toggle('hidden');
 }
 
 const globalUnitsBtn = document.getElementById('global-units-btn');
@@ -210,23 +212,59 @@ async function toggleGlobalUnits() {
   currentUnits = currentUnits === 'metric' ? 'us' : 'metric';
   updateGlobalUnitButtonText();
 
-  console.log(`Global units toggled to: ${currentUnits}`);
-
-  const citiesToUpdate = [...displayedCities];
-  displayedCities = [];
-  cityCardsContainer.innerHTML = '';
-
-  for (const city of citiesToUpdate) {
+  // Use Promise.all to update all cities concurrently instead of sequential for loop
+  const cityUpdatePromises = displayedCities.map(async (city) => {
     const updatedData = await getWeatherData(city.address);
     if (updatedData) {
-      displayedCities.push(updatedData);
-      renderCityCard(updatedData);
+      // Find the index and update in place to maintain order
+      const index = displayedCities.findIndex((c) => c.id === city.id);
+      if (index !== -1) {
+        displayedCities[index] = updatedData;
+      }
+      return updatedData;
     }
-  }
+    return null;
+  });
+
+  const updatedCities = await Promise.all(cityUpdatePromises);
+
+  // Re-render all cards with updated data
+  updatedCities.forEach((cityData) => {
+    if (cityData) {
+      renderCityCard(cityData);
+    }
+  });
 }
 
 const searchCityInput = document.getElementById('search-city');
 const searchButton = document.getElementById('search-btn');
+
+function showMessage(message) {
+  // Replace alert with a more user-friendly notification
+  // For now, using console.log instead of alert to avoid linting issues
+  // You can replace this with a custom modal or toast notification later
+  // eslint-disable-next-line no-console
+  console.log(message);
+
+  // Create a temporary visual feedback element
+  const messageDiv = document.createElement('div');
+  messageDiv.textContent = message;
+  messageDiv.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #333;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    z-index: 1000;
+  `;
+  document.body.appendChild(messageDiv);
+
+  setTimeout(() => {
+    document.body.removeChild(messageDiv);
+  }, 3000);
+}
 
 searchButton.addEventListener('click', async (e) => {
   e.preventDefault();
@@ -235,10 +273,11 @@ searchButton.addEventListener('click', async (e) => {
   if (cityName) {
     const existingCity = displayedCities.find(
       (city) =>
-        city.address.includes(cityName) || cityName.includes(city.address)
+        city.address.toLowerCase().includes(cityName.toLowerCase()) ||
+        cityName.toLowerCase().includes(city.address.toLowerCase())
     );
     if (existingCity) {
-      alert(`${cityName} is already displayed.`);
+      showMessage(`${cityName} is already displayed.`);
       searchCityInput.value = '';
       return;
     }
@@ -249,16 +288,20 @@ searchButton.addEventListener('click', async (e) => {
       renderCityCard(cityData);
       searchCityInput.value = '';
     } else {
-      alert('Could not find weather data for that city. Please try again.');
+      showMessage(
+        'Could not find weather data for that city. Please try again.'
+      );
     }
   } else {
-    alert('Please enter a city name.');
+    showMessage('Please enter a city name.');
   }
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
   updateGlobalUnitButtonText();
-  globalUnitsBtn.addEventListener('click', toggleGlobalUnits);
+  if (globalUnitsBtn) {
+    globalUnitsBtn.addEventListener('click', toggleGlobalUnits);
+  }
   const defaultCityName = 'Edmonton';
   const cityData = await getWeatherData(defaultCityName);
   if (cityData) {
