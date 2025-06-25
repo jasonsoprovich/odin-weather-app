@@ -247,15 +247,6 @@ ul {
   line-height: 1;
 }
 
-.current-temp::after {
-  content: '°';
-  position: absolute;
-  top: 0.5em;
-  right: -0.6em;
-  font-size: 0.6em;
-  vertical-align: super;
-}
-
 .card-units-toggle-btn {
   background-color: transparent;
   color: #777;
