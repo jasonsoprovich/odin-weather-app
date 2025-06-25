@@ -117,6 +117,8 @@ ul {
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.2s ease;
+  position: relative;
+  perspective: 1000px;
 }
 
 .city-card:hover {
@@ -130,11 +132,96 @@ ul {
   padding: 20px;
   box-sizing: border-box;
   position: relative;
+  background: white;
+  border-radius: 15px;
 }
 
 /* Card front styling */
 .card-front {
   justify-content: space-between;
+  position: relative;
+}
+
+/* Card back styling  */
+.card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.card-back-content {
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.card-back-content h3 {
+  margin: 0 0 20px 0;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  overflow: hidden;
+  justify-content: space-around;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: 500;
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #2196f3;
+}
+
+/* Card flip animation */
+.city-card .card-front {
+  display: block;
+}
+
+.city-card .card-back {
+  display: none;
+}
+
+.city-card.flipped .card-front {
+  display: none;
+}
+
+.city-card.flipped .card-back {
+  display: block;
 }
 
 .city-info {
@@ -256,93 +343,6 @@ ul {
   font-size: 0.75rem;
   opacity: 0.6;
   color: #666;
-}
-
-/* Card back styling */
-.card-back {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: inherit;
-  border-radius: inherit;
-  overflow: hidden;
-}
-
-.card-back-content {
-  padding: 20px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.card-back-content h3 {
-  margin: 0 0 20px 0;
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.details-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex: 1;
-  overflow: hidden;
-  justify-content: space-around;
-}
-
-.detail-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  flex-shrink: 0;
-}
-
-.detail-item:last-child {
-  border-bottom: none;
-}
-
-.detail-label {
-  font-weight: 500;
-  opacity: 0.7;
-  font-size: 0.9rem;
-}
-
-.detail-value {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #2196f3;
-}
-
-/* Card flip animation */
-.city-card.flipped .card-front {
-  transform: rotateY(180deg);
-}
-
-.city-card.flipped .card-back {
-  transform: rotateY(0deg);
-}
-
-.card-front,
-.card-back {
-  backface-visibility: hidden;
-  transition: transform 0.6s ease;
-}
-
-.card-back {
-  transform: rotateY(180deg);
-}
-
-.hidden {
-  display: none !important;
 }
 
 /* Responsive adjustments */
