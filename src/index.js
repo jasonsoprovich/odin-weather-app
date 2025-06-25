@@ -88,6 +88,18 @@ async function getWeatherData(locationName) {
         current: data.currentConditions.temp,
         next: nextHours,
       },
+      weeklyForecast: data.days.slice(0, 7).map((day) => ({
+        date: day.datetimeEpoch,
+        conditions: day.conditions,
+        icon: day.icon,
+        temp: day.temp,
+        maxTemp: day.tempmax,
+        minTemp: day.tempmin,
+        dayName: new Date(day.datetimeEpoch * 1000).toLocaleDateString(
+          'en-US',
+          { weekday: 'short' }
+        ),
+      })),
       daysArray: data.days.map((day) => ({
         date: day.datetimeEpoch,
         conditions: day.conditions,
@@ -140,12 +152,18 @@ function renderCityCard(cityData) {
   }
 
   const currentParts = formatCurrentTimeFromTimezone(cityData.timezone);
-
   const cityName = cityData.address.split(',')[0].trim();
 
   const frontContent = `
     <div class="card-inner card-front">
       <div class="city-info">
+        <div class="weather-icon">
+          <img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Monochrome/${
+            cityData.currentConditions.icon
+          }.png" 
+               alt="${cityData.currentConditions.conditions}" 
+               onerror="this.style.display='none'">
+        </div>
         <h2 class="city-name">${cityName}</h2>
         <div class="datetime-info">
           <span class="day-name">${currentParts.weekday}</span> |
@@ -153,8 +171,9 @@ function renderCityCard(cityData) {
           <span class="time">${currentParts.hour}:${currentParts.minute} ${
     currentParts.dayPeriod
   }</span>
+        </div>
       </div>
-      </div>
+      
       <div class="temp-section">
         <div class="hourly-temps">
           ${cityData.hourlyTemps.previous
@@ -172,42 +191,96 @@ function renderCityCard(cityData) {
             .join('')}
         </div>
       </div>
+
+      <div class="weekly-forecast">
+        ${cityData.weeklyForecast
+          .map(
+            (day, index) => `
+            <div class="forecast-day ${index === 0 ? 'today' : ''}">
+              <span class="forecast-day-name">${
+                index === 0 ? 'Today' : day.dayName
+              }</span>
+              <img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Monochrome/${
+                day.icon
+              }.png" 
+                   alt="${day.conditions}" 
+                   class="forecast-icon"
+                   onerror="this.style.display='none'">
+              <div class="forecast-temps">
+                <span class="forecast-high">${Math.round(day.maxTemp)}</span>
+                <span class="forecast-low">${Math.round(day.minTemp)}</span>
+              </div>
+            </div>
+          `
+          )
+          .join('')}
+      </div>
     </div>
+    
     <div class="card-inner card-back">
-      <h3>Detailed Info for ${cityName}</h3>
-      <p>Feels like: <span class="feels-like-temp">${
-        cityData.currentConditions.feelsLike !== undefined &&
-        !Number.isNaN(cityData.currentConditions.feelsLike)
-          ? `${Math.round(cityData.currentConditions.feelsLike)}°`
-          : 'N/A'
-      }</span></p>
-      <p>Humidity: ${
-        cityData.currentConditions.humidity !== undefined &&
-        !Number.isNaN(cityData.currentConditions.humidity)
-          ? `${cityData.currentConditions.humidity}%`
-          : 'N/A'
-      }</p>
-      <p>Wind Speed: ${
-        cityData.currentConditions.windSpeed !== undefined &&
-        !Number.isNaN(cityData.currentConditions.windSpeed)
-          ? `${cityData.currentConditions.windSpeed} ${
-              currentUnits === 'metric' ? 'km/h' : 'mph'
-            }`
-          : 'N/A'
-      }</p>
-      <p>Conditions: ${cityData.currentConditions.conditions || 'N/A'}</p>
-      <p>UV Index: ${
-        cityData.currentConditions.uvIndex !== undefined &&
-        !Number.isNaN(cityData.currentConditions.uvIndex)
-          ? cityData.currentConditions.uvIndex
-          : 'N/A'
-      }</p>
-      <p>Precipitation Probability: ${
-        cityData.currentConditions.precipProb !== undefined &&
-        !Number.isNaN(cityData.currentConditions.precipProb)
-          ? `${cityData.currentConditions.precipProb}%`
-          : 'N/A'
-      }</p>
+      <div class="card-back-content">
+        <h3>Detailed Info for ${cityName}</h3>
+        <div class="details-grid">
+          <div class="detail-item">
+            <span class="detail-label">Feels like:</span>
+            <span class="detail-value">${
+              cityData.currentConditions.feelsLike !== undefined &&
+              !Number.isNaN(cityData.currentConditions.feelsLike)
+                ? `${Math.round(cityData.currentConditions.feelsLike)}°`
+                : 'N/A'
+            }</span>
+          </div>
+          
+          <div class="detail-item">
+            <span class="detail-label">Humidity:</span>
+            <span class="detail-value">${
+              cityData.currentConditions.humidity !== undefined &&
+              !Number.isNaN(cityData.currentConditions.humidity)
+                ? `${cityData.currentConditions.humidity}%`
+                : 'N/A'
+            }</span>
+          </div>
+          
+          <div class="detail-item">
+            <span class="detail-label">Wind Speed:</span>
+            <span class="detail-value">${
+              cityData.currentConditions.windSpeed !== undefined &&
+              !Number.isNaN(cityData.currentConditions.windSpeed)
+                ? `${cityData.currentConditions.windSpeed} ${
+                    currentUnits === 'metric' ? 'km/h' : 'mph'
+                  }`
+                : 'N/A'
+            }</span>
+          </div>
+          
+          <div class="detail-item">
+            <span class="detail-label">Conditions:</span>
+            <span class="detail-value">${
+              cityData.currentConditions.conditions || 'N/A'
+            }</span>
+          </div>
+          
+          <div class="detail-item">
+            <span class="detail-label">UV Index:</span>
+            <span class="detail-value">${
+              cityData.currentConditions.uvIndex !== undefined &&
+              !Number.isNaN(cityData.currentConditions.uvIndex)
+                ? cityData.currentConditions.uvIndex
+                : 'N/A'
+            }</span>
+          </div>
+          
+          <div class="detail-item">
+            <span class="detail-label">Precipitation:</span>
+            <span class="detail-value">${
+              cityData.currentConditions.precipProb !== undefined &&
+              !Number.isNaN(cityData.currentConditions.precipProb)
+                ? `${cityData.currentConditions.precipProb}%`
+                : 'N/A'
+            }</span>
+          </div>
+        </div>
+      </div>
     </div>
   `;
 
@@ -261,8 +334,6 @@ const searchCityInput = document.getElementById('search-city');
 const searchButton = document.getElementById('search-btn');
 
 function showMessage(message) {
-  console.log(message);
-
   const messageDiv = document.createElement('div');
   messageDiv.textContent = message;
   messageDiv.style.cssText = `
