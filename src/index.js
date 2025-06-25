@@ -60,21 +60,28 @@ async function getWeatherData(locationName) {
     );
     const id = existingCity ? existingCity.id : crypto.randomUUID();
 
+    const { currentConditions } = data;
+
     return {
       id,
       address: data.resolvedAddress,
       timezone: data.timezone,
       currentConditions: {
-        datetime: data.currentConditions.datetime,
-        datetimeEpoch: data.currentConditions.datetimeEpoch,
-        temp: data.currentConditions.temp,
-        conditions: data.currentConditions.conditions,
-        icon: data.currentConditions.icon,
-        feelsLike: data.currentConditions.feelsLike,
-        humidity: data.currentConditions.humidity,
-        windSpeed: data.currentConditions.windSpeed,
-        uvIndex: data.currentConditions.uvIndex,
-        precipProb: data.currentConditions.precipProb,
+        datetime: currentConditions.datetime,
+        datetimeEpoch: currentConditions.datetimeEpoch,
+        temp: currentConditions.temp,
+        conditions: currentConditions.conditions,
+        icon: currentConditions.icon,
+        feelsLike:
+          currentConditions.feelslike ||
+          currentConditions.feelsLike ||
+          currentConditions.temp,
+        humidity: currentConditions.humidity || 0,
+        windSpeed:
+          currentConditions.windspeed || currentConditions.windSpeed || 0,
+        uvIndex: currentConditions.uvindex || currentConditions.uvIndex || 0,
+        precipProb:
+          currentConditions.precipprob || currentConditions.precipProb || 0,
       },
       hourlyTemps: {
         previous: previousHours,
@@ -119,7 +126,6 @@ function renderCityCard(cityData) {
     `.city-card[data-city-id="${cityData.id}"]`
   );
 
-  // Store flip state before re-rendering
   const wasFlipped = cardElement
     ? cardElement.classList.contains('flipped')
     : false;
@@ -133,10 +139,8 @@ function renderCityCard(cityData) {
     cardElement.addEventListener('click', () => toggleCardFlip(cardElement));
   }
 
-  // Get current time for the city's timezone
   const currentParts = formatCurrentTimeFromTimezone(cityData.timezone);
 
-  // Extract just city name (remove country)
   const cityName = cityData.address.split(',')[0].trim();
 
   const frontContent = `
@@ -149,7 +153,7 @@ function renderCityCard(cityData) {
           <span class="time">${currentParts.hour}:${currentParts.minute} ${
     currentParts.dayPeriod
   }</span>
-        </div>
+      </div>
       </div>
       <div class="temp-section">
         <div class="hourly-temps">
@@ -171,24 +175,44 @@ function renderCityCard(cityData) {
     </div>
     <div class="card-inner card-back">
       <h3>Detailed Info for ${cityName}</h3>
-      <p>Feels like: <span class="feels-like-temp">${Math.round(
-        cityData.currentConditions.feelsLike
-      )}°</span></p>
-      <p>Humidity: ${cityData.currentConditions.humidity}%</p>
-      <p>Wind Speed: ${cityData.currentConditions.windSpeed} ${
-    currentUnits === 'metric' ? 'km/h' : 'mph'
-  }</p>
-      <p>Conditions: ${cityData.currentConditions.conditions}</p>
-      <p>UV Index: ${cityData.currentConditions.uvIndex}</p>
+      <p>Feels like: <span class="feels-like-temp">${
+        cityData.currentConditions.feelsLike !== undefined &&
+        !Number.isNaN(cityData.currentConditions.feelsLike)
+          ? `${Math.round(cityData.currentConditions.feelsLike)}°`
+          : 'N/A'
+      }</span></p>
+      <p>Humidity: ${
+        cityData.currentConditions.humidity !== undefined &&
+        !Number.isNaN(cityData.currentConditions.humidity)
+          ? `${cityData.currentConditions.humidity}%`
+          : 'N/A'
+      }</p>
+      <p>Wind Speed: ${
+        cityData.currentConditions.windSpeed !== undefined &&
+        !Number.isNaN(cityData.currentConditions.windSpeed)
+          ? `${cityData.currentConditions.windSpeed} ${
+              currentUnits === 'metric' ? 'km/h' : 'mph'
+            }`
+          : 'N/A'
+      }</p>
+      <p>Conditions: ${cityData.currentConditions.conditions || 'N/A'}</p>
+      <p>UV Index: ${
+        cityData.currentConditions.uvIndex !== undefined &&
+        !Number.isNaN(cityData.currentConditions.uvIndex)
+          ? cityData.currentConditions.uvIndex
+          : 'N/A'
+      }</p>
       <p>Precipitation Probability: ${
-        cityData.currentConditions.precipProb
-      }%</p>
+        cityData.currentConditions.precipProb !== undefined &&
+        !Number.isNaN(cityData.currentConditions.precipProb)
+          ? `${cityData.currentConditions.precipProb}%`
+          : 'N/A'
+      }</p>
     </div>
   `;
 
   cardElement.innerHTML = frontContent;
 
-  // Restore flip state
   if (wasFlipped) {
     cardElement.classList.add('flipped');
     cardElement.querySelector('.card-front').classList.add('hidden');
@@ -212,11 +236,9 @@ async function toggleGlobalUnits() {
   currentUnits = currentUnits === 'metric' ? 'us' : 'metric';
   updateGlobalUnitButtonText();
 
-  // Use Promise.all to update all cities concurrently instead of sequential for loop
   const cityUpdatePromises = displayedCities.map(async (city) => {
     const updatedData = await getWeatherData(city.address);
     if (updatedData) {
-      // Find the index and update in place to maintain order
       const index = displayedCities.findIndex((c) => c.id === city.id);
       if (index !== -1) {
         displayedCities[index] = updatedData;
@@ -228,7 +250,6 @@ async function toggleGlobalUnits() {
 
   const updatedCities = await Promise.all(cityUpdatePromises);
 
-  // Re-render all cards with updated data
   updatedCities.forEach((cityData) => {
     if (cityData) {
       renderCityCard(cityData);
@@ -240,13 +261,8 @@ const searchCityInput = document.getElementById('search-city');
 const searchButton = document.getElementById('search-btn');
 
 function showMessage(message) {
-  // Replace alert with a more user-friendly notification
-  // For now, using console.log instead of alert to avoid linting issues
-  // You can replace this with a custom modal or toast notification later
-  // eslint-disable-next-line no-console
   console.log(message);
 
-  // Create a temporary visual feedback element
   const messageDiv = document.createElement('div');
   messageDiv.textContent = message;
   messageDiv.style.cssText = `
