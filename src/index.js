@@ -133,6 +133,70 @@ function formatCurrentTimeFromTimezone(timezone) {
     }, {});
 }
 
+function createDeleteButton(cityData, cardElement) {
+  const deleteBtn = document.createElement('button');
+  deleteBtn.classList.add('delete-btn');
+  deleteBtn.innerHTML = '×';
+  deleteBtn.setAttribute('aria-label', 'Delete city card');
+
+  deleteBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    showDeleteConfirmation(cityData, cardElement);
+  });
+
+  return deleteBtn;
+}
+
+function showDeleteConfirmation(cityData, cardElement) {
+  const cityName = cityData.address.split(',')[0].trim();
+
+  const modalOverlay = document.createElement('div');
+  modalOverlay.classList.add('modal-overlay');
+
+  modalOverlay.innerHTML = `
+    <div class="modal">
+      <h3>Delete City Card</h3>
+      <p>Are you sure you want to remove <strong>${cityName}</strong> from your weather dashboard?</p>
+      <div class="modal-buttons">
+        <button class="modal-btn cancel">Cancel</button>
+        <button class="modal-btn confirm">Delete</button>
+      </div>
+    </div>
+  `;
+
+  const cancelBtn = modalOverlay.querySelector('.cancel');
+  const confirmBtn = modalOverlay.querySelector('.confirm');
+
+  cancelBtn.addEventListener('click', () => {
+    document.body.removeChild(modalOverlay);
+  });
+
+  confirmBtn.addEventListener('click', () => {
+    deleteCity(cityData.id, cardElement);
+    document.body.removeChild(modalOverlay);
+  });
+
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) {
+      document.body.removeChild(modalOverlay);
+    }
+  });
+
+  document.body.appendChild(modalOverlay);
+}
+
+function deleteCity(cityId, cardElement) {
+  const cityIndex = displayedCities.findIndex((city) => city.id === cityId);
+  if (cityIndex !== -1) {
+    displayedCities.splice(cityIndex, 1);
+  }
+
+  cardElement.remove();
+
+  const cityName = cardElement.querySelector('.city-name').textContent;
+  showMessage(`${cityName} has been removed from your dashboard.`);
+}
+
 function renderCityCard(cityData) {
   let cardElement = document.querySelector(
     `.city-card[data-city-id="${cityData.id}"]`
@@ -285,6 +349,10 @@ function renderCityCard(cityData) {
   `;
 
   cardElement.innerHTML = frontContent;
+
+  // Add delete button to the card (always visible on both sides)
+  const deleteBtn = createDeleteButton(cityData, cardElement);
+  cardElement.appendChild(deleteBtn);
 
   if (wasFlipped) {
     cardElement.classList.add('flipped');
