@@ -102,3 +102,9 @@ export function clearCitiesFromLocalStorage() {
     console.warn('Failed to clear cities from localStorage:', error);
   }
 }
+
+export function reorderDisplayedCities(displayedCities, newOrder) {
+  displayedCities.length = 0; // Clear existing array
+  displayedCities.push(...newOrder); // Add new order
+  saveCitiesToLocalStorage(displayedCities);
+}

@@ -319,6 +319,12 @@ export function renderCityCard(cityData, existingCardElement = null) {
     cityCardsContainer.appendChild(cardElement);
 
     cardElement.addEventListener('click', () => toggleCardFlip(cardElement));
+
+    // Enable drag and drop for the new card (lazy import to avoid circular dependency)
+    // eslint-disable-next-line import/no-cycle
+    import('./dragDrop').then(({ enableDragAndDropForCard }) => {
+      enableDragAndDropForCard(cardElement);
+    });
   }
 
   // Hide loading overlay if it exists

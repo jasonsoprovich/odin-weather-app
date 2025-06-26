@@ -220,12 +220,55 @@ ul {
   box-shadow: 0 4px 15px var(--card-shadow-hover);
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   perspective: 1000px;
+  /* Drag and drop properties */
+  user-select: none;
 }
 
-.city-card:hover {
+.city-card[draggable='true'] {
+  cursor: grab;
+}
+
+.city-card[draggable='true']:active {
+  cursor: grabbing;
+}
+
+.city-card.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.city-card.drag-over {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 122, 204, 0.3);
+  border: 2px solid var(--color-accent);
+}
+
+.drag-placeholder {
+  width: 350px;
+  height: 500px;
+  border: 3px dashed var(--color-accent);
+  border-radius: 15px;
+  background: rgba(0, 122, 204, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+  font-size: 1.1rem;
+  font-weight: 600;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.drag-placeholder::before {
+  content: 'Drop here to reorder';
+}
+
+.city-card:hover:not(.dragging) {
   transform: translateY(-2px);
 }
 
@@ -636,6 +679,11 @@ ul {
     height: 450px;
   }
 
+  .drag-placeholder {
+    width: 320px;
+    height: 450px;
+  }
+
   .current-temp {
     font-size: 3rem;
   }
@@ -714,6 +762,13 @@ ul {
     margin: 0 auto;
   }
 
+  .drag-placeholder {
+    width: 100%;
+    max-width: 320px;
+    height: 450px;
+    margin: 0 auto;
+  }
+
   .current-temp {
     font-size: 3rem;
   }
@@ -780,6 +835,11 @@ ul {
   }
 
   .city-card {
+    width: 320px;
+    height: 450px;
+  }
+
+  .drag-placeholder {
     width: 320px;
     height: 450px;
   }

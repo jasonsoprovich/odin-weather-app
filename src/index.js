@@ -14,6 +14,7 @@ import {
   loadSavedCities,
   initializeDisplayedCities,
 } from './render';
+import { initializeDragAndDrop } from './dragDrop';
 
 async function toggleGlobalUnits() {
   toggleUnits();
@@ -162,6 +163,9 @@ async function loadSavedCitiesWithFreshData(savedCities) {
 async function initializeApp() {
   updateGlobalUnitButtonText();
   setupEventListeners();
+
+  // Initialize drag and drop functionality
+  initializeDragAndDrop();
 
   // Load saved cities from localStorage
   const savedCities = loadSavedCities();
