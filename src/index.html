@@ -8,23 +8,27 @@
   </head>
 
   <body>
-    <div class="header-section">
-      <div class="logo-section">
-        <h1 id="header-logo">Climata</h1>
-      </div>
+    <nav class="nav-header">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <h1 id="header-logo">Climata</h1>
+        </div>
 
-      <div class="search-section">
-        <input
-          type="text"
-          id="search-city"
-          required
-          placeholder="Enter city name"
-        />
-        <button id="search-btn">Add City</button>
-        <button type="button" id="global-units-btn">C°</button>
+        <div class="nav-controls">
+          <input
+            type="text"
+            id="search-city"
+            required
+            placeholder="Enter city name"
+          />
+          <button id="search-btn">Add City</button>
+          <button type="button" id="global-units-btn">C°</button>
+        </div>
       </div>
-    </div>
+    </nav>
 
-    <div id="city-cards-container"></div>
+    <main class="main-content">
+      <div id="city-cards-container"></div>
+    </main>
   </body>
 </html>

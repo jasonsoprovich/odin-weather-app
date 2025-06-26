@@ -60,7 +60,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 1rem 0;
+  padding: 0;
   background-color: var(--color-bg);
 }
 
@@ -129,55 +129,76 @@ ul {
   list-style: none;
 }
 
-/* Header section styling */
-.header-section {
+/* Navigation header styling */
+.nav-header {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background-color: var(--card-bg);
+  box-shadow: 0 2px 8px var(--card-shadow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
   margin-bottom: 30px;
-  padding: 0 20px;
 }
 
-.logo-section {
-  text-align: center;
-  margin-bottom: 20px;
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-logo {
+  flex-shrink: 0;
 }
 
 #header-logo {
   font-family: 'Lufga Medium', sans-serif;
-  font-size: 3.5rem;
+  font-size: 2.5rem;
   font-weight: normal;
   color: var(--color-accent);
   margin: 0;
   letter-spacing: 0.5px;
 }
 
-.search-section {
+.nav-controls {
   display: flex;
   align-items: center;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: nowrap;
-  min-width: 0;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
-.search-section label {
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.search-section input {
+.nav-controls input {
   min-width: 200px;
   max-width: 300px;
-  flex: 1;
   padding: 8px 12px;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  font-size: 0.9rem;
 }
 
-.search-section button {
+.nav-controls button {
   padding: 8px 16px;
+  background-color: var(--color-accent);
+  color: var(--button-text);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
   white-space: nowrap;
-  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+}
+
+.nav-controls button:hover {
+  opacity: 0.9;
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  width: 100%;
 }
 
 /* Card grid layout */
@@ -185,7 +206,7 @@ ul {
   display: grid;
   grid-template-columns: repeat(auto-fit, 350px);
   gap: 20px;
-  padding: 0 20px 20px 20px;
+  padding: 0 20px 40px 20px;
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
@@ -573,28 +594,40 @@ ul {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .header-section {
-    padding: 0 15px;
-    margin-bottom: 20px;
+  .nav-container {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
   }
 
-  .search-section {
-    gap: 8px;
+  .nav-logo {
+    text-align: center;
   }
 
-  .search-section input {
+  #header-logo {
+    font-size: 2.2rem;
+  }
+
+  .nav-controls {
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .nav-controls input {
     min-width: 150px;
-    max-width: 250px;
+    max-width: 200px;
+    flex: 1;
   }
 
-  .search-section button {
+  .nav-controls button {
     padding: 8px 12px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   #city-cards-container {
     grid-template-columns: repeat(auto-fit, 320px);
-    padding: 0 15px 15px 15px;
+    padding: 0 15px 30px 15px;
     gap: 15px;
   }
 
@@ -644,28 +677,34 @@ ul {
 }
 
 @media (max-width: 480px) {
-  .search-section {
-    gap: 6px;
+  .nav-container {
+    padding: 12px;
+    gap: 12px;
   }
 
-  .search-section input {
+  #header-logo {
+    font-size: 2rem;
+  }
+
+  .nav-controls {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .nav-controls input {
     min-width: 120px;
-    max-width: 200px;
+    max-width: 180px;
     font-size: 0.9rem;
   }
 
-  .search-section button {
+  .nav-controls button {
     padding: 8px 10px;
-    font-size: 0.85rem;
-  }
-
-  .header-section {
-    padding: 0 12px;
+    font-size: 0.8rem;
   }
 
   #city-cards-container {
     grid-template-columns: 1fr;
-    padding: 0 12px 12px 12px;
+    padding: 0 12px 25px 12px;
   }
 
   .city-card {
@@ -728,6 +767,18 @@ ul {
 }
 
 @media (min-width: 769px) {
+  .nav-container {
+    padding: 20px;
+  }
+
+  #header-logo {
+    font-size: 2.8rem;
+  }
+
+  .nav-controls input {
+    min-width: 220px;
+  }
+
   .city-card {
     width: 320px;
     height: 450px;
@@ -736,7 +787,7 @@ ul {
   #city-cards-container {
     grid-template-columns: repeat(auto-fit, 320px);
     gap: 20px;
-    padding: 0 20px 20px 20px;
+    padding: 0 20px 40px 20px;
   }
 
   .current-temp {
