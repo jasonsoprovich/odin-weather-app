@@ -7,6 +7,92 @@ const cityCardsContainer = document.getElementById('city-cards-container');
 
 const displayedCities = [];
 
+function showMessage(message) {
+  const messageDiv = document.createElement('div');
+  messageDiv.textContent = message;
+  messageDiv.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #333;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    z-index: 1000;
+  `;
+  document.body.appendChild(messageDiv);
+
+  setTimeout(() => {
+    if (document.body.contains(messageDiv)) {
+      document.body.removeChild(messageDiv);
+    }
+  }, 3000);
+}
+
+function deleteCity(cityId, cardElement) {
+  const cityIndex = displayedCities.findIndex((city) => city.id === cityId);
+  if (cityIndex !== -1) {
+    displayedCities.splice(cityIndex, 1);
+  }
+
+  const cityName = cardElement.querySelector('.city-name').textContent;
+  cardElement.remove();
+
+  showMessage(`${cityName} has been removed from your dashboard.`);
+}
+
+function showDeleteConfirmation(cityData, cardElement) {
+  const cityName = cityData.address.split(',')[0].trim();
+
+  const modalOverlay = document.createElement('div');
+  modalOverlay.classList.add('modal-overlay');
+
+  modalOverlay.innerHTML = `
+    <div class="modal">
+      <h3>Delete City Card</h3>
+      <p>Are you sure you want to remove <strong>${cityName}</strong> from your weather dashboard?</p>
+      <div class="modal-buttons">
+        <button class="modal-btn cancel">Cancel</button>
+        <button class="modal-btn confirm">Delete</button>
+      </div>
+    </div>
+  `;
+
+  const cancelBtn = modalOverlay.querySelector('.cancel');
+  const confirmBtn = modalOverlay.querySelector('.confirm');
+
+  cancelBtn.addEventListener('click', () => {
+    document.body.removeChild(modalOverlay);
+  });
+
+  confirmBtn.addEventListener('click', () => {
+    deleteCity(cityData.id, cardElement);
+    document.body.removeChild(modalOverlay);
+  });
+
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) {
+      document.body.removeChild(modalOverlay);
+    }
+  });
+
+  document.body.appendChild(modalOverlay);
+}
+
+function createDeleteButton(cityData, cardElement) {
+  const deleteBtn = document.createElement('button');
+  deleteBtn.classList.add('delete-btn');
+  deleteBtn.innerHTML = '×';
+  deleteBtn.setAttribute('aria-label', 'Delete city card');
+
+  deleteBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    showDeleteConfirmation(cityData, cardElement);
+  });
+
+  return deleteBtn;
+}
+
 function toggleCardFlip(cardElement) {
   cardElement.classList.toggle('flipped');
   cardElement.querySelector('.card-front').classList.toggle('hidden');
@@ -131,70 +217,6 @@ function formatCurrentTimeFromTimezone(timezone) {
       acc[part.type] = part.value;
       return acc;
     }, {});
-}
-
-function createDeleteButton(cityData, cardElement) {
-  const deleteBtn = document.createElement('button');
-  deleteBtn.classList.add('delete-btn');
-  deleteBtn.innerHTML = '×';
-  deleteBtn.setAttribute('aria-label', 'Delete city card');
-
-  deleteBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    showDeleteConfirmation(cityData, cardElement);
-  });
-
-  return deleteBtn;
-}
-
-function showDeleteConfirmation(cityData, cardElement) {
-  const cityName = cityData.address.split(',')[0].trim();
-
-  const modalOverlay = document.createElement('div');
-  modalOverlay.classList.add('modal-overlay');
-
-  modalOverlay.innerHTML = `
-    <div class="modal">
-      <h3>Delete City Card</h3>
-      <p>Are you sure you want to remove <strong>${cityName}</strong> from your weather dashboard?</p>
-      <div class="modal-buttons">
-        <button class="modal-btn cancel">Cancel</button>
-        <button class="modal-btn confirm">Delete</button>
-      </div>
-    </div>
-  `;
-
-  const cancelBtn = modalOverlay.querySelector('.cancel');
-  const confirmBtn = modalOverlay.querySelector('.confirm');
-
-  cancelBtn.addEventListener('click', () => {
-    document.body.removeChild(modalOverlay);
-  });
-
-  confirmBtn.addEventListener('click', () => {
-    deleteCity(cityData.id, cardElement);
-    document.body.removeChild(modalOverlay);
-  });
-
-  modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) {
-      document.body.removeChild(modalOverlay);
-    }
-  });
-
-  document.body.appendChild(modalOverlay);
-}
-
-function deleteCity(cityId, cardElement) {
-  const cityIndex = displayedCities.findIndex((city) => city.id === cityId);
-  if (cityIndex !== -1) {
-    displayedCities.splice(cityIndex, 1);
-  }
-
-  cardElement.remove();
-
-  const cityName = cardElement.querySelector('.city-name').textContent;
-  showMessage(`${cityName} has been removed from your dashboard.`);
 }
 
 function renderCityCard(cityData) {
@@ -400,28 +422,7 @@ async function toggleGlobalUnits() {
 const searchCityInput = document.getElementById('search-city');
 const searchButton = document.getElementById('search-btn');
 
-function showMessage(message) {
-  const messageDiv = document.createElement('div');
-  messageDiv.textContent = message;
-  messageDiv.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #333;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
-    z-index: 1000;
-  `;
-  document.body.appendChild(messageDiv);
-
-  setTimeout(() => {
-    document.body.removeChild(messageDiv);
-  }, 3000);
-}
-
-searchButton.addEventListener('click', async (e) => {
-  e.preventDefault();
+async function addCity() {
   const cityName = searchCityInput.value.trim();
 
   if (cityName) {
@@ -441,6 +442,7 @@ searchButton.addEventListener('click', async (e) => {
       displayedCities.push(cityData);
       renderCityCard(cityData);
       searchCityInput.value = '';
+      showMessage(`${cityName} has been added to your dashboard.`);
     } else {
       showMessage(
         'Could not find weather data for that city. Please try again.'
@@ -448,6 +450,18 @@ searchButton.addEventListener('click', async (e) => {
     }
   } else {
     showMessage('Please enter a city name.');
+  }
+}
+
+searchButton.addEventListener('click', async (e) => {
+  e.preventDefault();
+  await addCity();
+});
+
+searchCityInput.addEventListener('keypress', async (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    await addCity();
   }
 });
 
