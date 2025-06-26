@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = (env, argv) => {
   const isProd = argv.mode === 'production';
@@ -34,6 +35,10 @@ module.exports = (env, argv) => {
         template: path.resolve(__dirname, '../src/index.html'),
         inject: 'body',
         title: 'Weather App',
+      }),
+      new Dotenv({
+        systemvars: true,
+        silent: true,
       }),
       ...(isProd
         ? [
