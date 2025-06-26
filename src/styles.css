@@ -121,7 +121,8 @@ ul {
   align-items: center;
   gap: 10px;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 
 .search-section label {
@@ -131,12 +132,15 @@ ul {
 
 .search-section input {
   min-width: 200px;
+  max-width: 300px;
+  flex: 1;
   padding: 8px 12px;
 }
 
 .search-section button {
   padding: 8px 16px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* Card grid layout */
@@ -498,12 +502,17 @@ ul {
   }
 
   .search-section {
-    flex-direction: column;
     gap: 8px;
   }
 
   .search-section input {
-    min-width: 250px;
+    min-width: 150px;
+    max-width: 250px;
+  }
+
+  .search-section button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
   }
 
   #city-cards-container {
@@ -558,8 +567,19 @@ ul {
 }
 
 @media (max-width: 480px) {
+  .search-section {
+    gap: 6px;
+  }
+
   .search-section input {
-    min-width: 200px;
+    min-width: 120px;
+    max-width: 200px;
+    font-size: 0.9rem;
+  }
+
+  .search-section button {
+    padding: 8px 10px;
+    font-size: 0.85rem;
   }
 
   .header-section {
