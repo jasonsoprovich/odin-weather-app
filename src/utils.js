@@ -1,5 +1,3 @@
-// Utility functions for the weather app
-
 export function showMessage(message) {
   const messageDiv = document.createElement('div');
   messageDiv.textContent = message;

@@ -1,4 +1,5 @@
-// Configuration constants and settings
+import { debugWarn } from './logger';
+
 export const CONFIG = {
   API_KEY: process.env.WEATHER_API_KEY || 'YOUR_API_KEY_HERE',
   API_BASE_URL:
@@ -9,25 +10,20 @@ export const CONFIG = {
   MESSAGE_DURATION: 3000,
 };
 
-// Validate API key configuration
 if (CONFIG.API_KEY === 'YOUR_API_KEY_HERE') {
-  // eslint-disable-next-line no-console
-  console.warn(
+  debugWarn(
     '⚠️  Weather API key not configured. Please set WEATHER_API_KEY environment variable.'
   );
-  // eslint-disable-next-line no-console
-  console.warn(
+  debugWarn(
     '📖 Check SETUP.md for instructions on how to configure your API key.'
   );
 }
 
-// Units configuration
 export const UNITS = {
   METRIC: 'metric',
   US: 'us',
 };
 
-// Units state management
 const unitsState = {
   current: UNITS.METRIC,
 };

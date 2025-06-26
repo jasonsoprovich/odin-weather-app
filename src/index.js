@@ -11,7 +11,6 @@ import {
   updateDisplayedCity,
 } from './render';
 
-// Event handlers
 async function toggleGlobalUnits() {
   toggleUnits();
   updateGlobalUnitButtonText();
@@ -19,7 +18,6 @@ async function toggleGlobalUnits() {
   const cityUpdatePromises = getDisplayedCities().map(async (city) => {
     const updatedData = await getWeatherData(city.address);
     if (updatedData) {
-      // Preserve the original ID when updating
       updatedData.id = city.id;
       updateDisplayedCity(updatedData);
       return updatedData;
@@ -69,7 +67,6 @@ async function addCity() {
   }
 }
 
-// Event listeners setup
 function setupEventListeners() {
   const searchButton = document.getElementById('search-btn');
   const searchCityInput = document.getElementById('search-city');
@@ -92,12 +89,10 @@ function setupEventListeners() {
   }
 }
 
-// Initialize the application
 async function initializeApp() {
   updateGlobalUnitButtonText();
   setupEventListeners();
 
-  // Load default city
   const cityData = await getWeatherData(CONFIG.DEFAULT_CITY);
   if (cityData) {
     addDisplayedCity(cityData);
@@ -105,5 +100,4 @@ async function initializeApp() {
   }
 }
 
-// Start the application when DOM is ready
 document.addEventListener('DOMContentLoaded', initializeApp);

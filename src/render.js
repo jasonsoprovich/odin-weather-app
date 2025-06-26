@@ -1,4 +1,3 @@
-// Rendering functions for the weather app UI
 import { CONFIG, getCurrentUnits, UNITS } from './config';
 import {
   formatCurrentTimeFromTimezone,
@@ -9,7 +8,6 @@ import {
   showMessage,
 } from './utils';
 
-// State management for displayed cities
 const displayedCities = [];
 
 export function getDisplayedCities() {

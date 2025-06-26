@@ -1,5 +1,5 @@
-// API functions for fetching weather data
 import { CONFIG, getCurrentUnits } from './config';
+import { debugError } from './logger';
 
 function processWeatherData(data) {
   const currentHour = new Date(
@@ -101,8 +101,7 @@ export default async function getWeatherData(locationName) {
 
     return processWeatherData(data);
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Weather API Error:', error);
+    debugError('Weather API Error:', error);
     return null;
   }
 }
