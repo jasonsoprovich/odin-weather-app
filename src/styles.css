@@ -17,6 +17,27 @@
   --card-shadow: rgba(0, 0, 0, 0.1);
   --temp-current-color: #ff7f50;
   --temp-other-color: #999;
+  --button-text: #fff;
+  --input-border: #ccc;
+  --card-bg: #ffffff;
+  --card-shadow-hover: rgba(0, 0, 0, 0.1);
+  --temp-hourly: #888;
+  --temp-primary: #2196f3;
+  --forecast-today-bg: rgba(33, 150, 243, 0.1);
+  --forecast-today-border: rgba(33, 150, 243, 0.2);
+  --forecast-high: #333;
+  --forecast-low: #666;
+  --delete-btn: #999;
+  --delete-btn-hover: #e74c3c;
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --modal-shadow: rgba(0, 0, 0, 0.3);
+  --modal-text: #666;
+  --modal-confirm: #e74c3c;
+  --modal-confirm-hover: #c0392b;
+  --modal-cancel: #95a5a6;
+  --modal-cancel-hover: #7f8c8d;
+  --detail-border: rgba(0, 0, 0, 0.08);
+  --delete-btn-shadow: rgba(231, 76, 60, 0.3);
 }
 
 html {
@@ -71,7 +92,7 @@ button {
   font: inherit;
   cursor: pointer;
   background-color: var(--color-accent);
-  color: #fff;
+  color: var(--button-text);
   border: none;
   padding: 0.5em 1em;
   border-radius: 4px;
@@ -86,7 +107,7 @@ input,
 textarea {
   font: inherit;
   padding: 0.5em;
-  border: 1px solid #ccc;
+  border: 1px solid var(--input-border);
   border-radius: 4px;
 }
 
@@ -159,7 +180,7 @@ ul {
   width: 350px;
   height: 500px;
   border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--card-shadow-hover);
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -178,7 +199,7 @@ ul {
   padding: 20px;
   box-sizing: border-box;
   position: relative;
-  background: white;
+  background: var(--card-bg);
   border-radius: 15px;
 }
 
@@ -195,7 +216,7 @@ ul {
   left: 0;
   right: 0;
   bottom: 0;
-  background: white;
+  background: var(--card-bg);
   border-radius: 15px;
   overflow: hidden;
   z-index: 2;
@@ -233,7 +254,7 @@ ul {
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--detail-border);
   flex-shrink: 0;
 }
 
@@ -250,7 +271,7 @@ ul {
 .detail-value {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #2196f3;
+  color: var(--temp-primary);
 }
 
 /* Card flip animation */
@@ -313,7 +334,7 @@ ul {
 
 .hourly-temp {
   font-size: 1.2rem;
-  color: #888;
+  color: var(--temp-hourly);
   font-weight: 400;
   transition: all 0.2s ease;
 }
@@ -321,7 +342,7 @@ ul {
 .current-temp {
   font-size: 3.5rem;
   font-weight: 700;
-  color: #2196f3;
+  color: var(--temp-primary);
   position: relative;
   margin: 0 10px;
 }
@@ -349,8 +370,8 @@ ul {
 }
 
 .forecast-day.today {
-  background: rgba(33, 150, 243, 0.1);
-  border: 1px solid rgba(33, 150, 243, 0.2);
+  background: var(--forecast-today-bg);
+  border: 1px solid var(--forecast-today-border);
 }
 
 .forecast-day-name {
@@ -382,13 +403,13 @@ ul {
 .forecast-high {
   font-weight: 600;
   font-size: 0.85rem;
-  color: #333;
+  color: var(--forecast-high);
 }
 
 .forecast-low {
   font-size: 0.75rem;
   opacity: 0.6;
-  color: #666;
+  color: var(--forecast-low);
 }
 
 /* Delete button styling */
@@ -399,7 +420,7 @@ ul {
   width: 20px;
   height: 20px;
   background: none;
-  color: #999;
+  color: var(--delete-btn);
   border: none;
   border-radius: 0;
   cursor: pointer;
@@ -415,14 +436,14 @@ ul {
 }
 
 .delete-btn:hover {
-  color: #e74c3c;
+  color: var(--delete-btn-hover);
   background: none;
   transform: none;
 }
 
 .delete-btn:hover {
-  color: #e74c3c;
-  text-shadow: 0 0 3px rgba(231, 76, 60, 0.3);
+  color: var(--delete-btn-hover);
+  text-shadow: 0 0 3px var(--delete-btn-shadow);
 }
 
 /* Confirmation modal styling */
@@ -432,7 +453,7 @@ ul {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--modal-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -440,10 +461,10 @@ ul {
 }
 
 .modal {
-  background: white;
+  background: var(--card-bg);
   padding: 25px;
   border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px var(--modal-shadow);
   max-width: 400px;
   width: 90%;
   text-align: center;
@@ -451,13 +472,13 @@ ul {
 
 .modal h3 {
   margin: 0 0 15px 0;
-  color: #333;
+  color: var(--color-text);
   font-size: 1.2rem;
 }
 
 .modal p {
   margin: 0 0 20px 0;
-  color: #666;
+  color: var(--modal-text);
   line-height: 1.4;
 }
 
@@ -477,21 +498,21 @@ ul {
 }
 
 .modal-btn.confirm {
-  background: #e74c3c;
-  color: white;
+  background: var(--modal-confirm);
+  color: var(--button-text);
 }
 
 .modal-btn.confirm:hover {
-  background: #c0392b;
+  background: var(--modal-confirm-hover);
 }
 
 .modal-btn.cancel {
-  background: #95a5a6;
-  color: white;
+  background: var(--modal-cancel);
+  color: var(--button-text);
 }
 
 .modal-btn.cancel:hover {
-  background: #7f8c8d;
+  background: var(--modal-cancel-hover);
 }
 
 /* Responsive adjustments */
