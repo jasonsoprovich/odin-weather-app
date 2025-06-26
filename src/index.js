@@ -350,7 +350,6 @@ function renderCityCard(cityData) {
 
   cardElement.innerHTML = frontContent;
 
-  // Add delete button to the card (always visible on both sides)
   const deleteBtn = createDeleteButton(cityData, cardElement);
   cardElement.appendChild(deleteBtn);
 
