@@ -6,6 +6,8 @@ import {
   removeModal,
   appendModal,
   showMessage,
+  saveCitiesToLocalStorage,
+  loadCitiesFromLocalStorage,
 } from './utils';
 
 const displayedCities = [];
@@ -16,12 +18,14 @@ export function getDisplayedCities() {
 
 export function addDisplayedCity(cityData) {
   displayedCities.push(cityData);
+  saveCitiesToLocalStorage(displayedCities);
 }
 
 export function removeDisplayedCity(cityId) {
   const cityIndex = displayedCities.findIndex((city) => city.id === cityId);
   if (cityIndex !== -1) {
     displayedCities.splice(cityIndex, 1);
+    saveCitiesToLocalStorage(displayedCities);
   }
 }
 
@@ -29,6 +33,7 @@ export function updateDisplayedCity(cityData) {
   const index = displayedCities.findIndex((c) => c.id === cityData.id);
   if (index !== -1) {
     displayedCities[index] = cityData;
+    saveCitiesToLocalStorage(displayedCities);
   }
 }
 
@@ -344,6 +349,16 @@ export function updateGlobalUnitButtonText() {
     globalUnitsBtn.textContent =
       getCurrentUnits() === UNITS.METRIC ? 'C°' : 'F°';
   }
+}
+
+// LocalStorage integration
+export function loadSavedCities() {
+  return loadCitiesFromLocalStorage();
+}
+
+export function initializeDisplayedCities(cities) {
+  displayedCities.length = 0; // Clear existing array
+  displayedCities.push(...cities); // Add new cities
 }
 
 // State management for displayed cities

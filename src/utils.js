@@ -62,3 +62,43 @@ export function removeModal(modalOverlay) {
 export function appendModal(modalOverlay) {
   document.body.appendChild(modalOverlay);
 }
+
+// LocalStorage management for persistent city data
+const STORAGE_KEY = 'weather-app-cities';
+
+export function saveCitiesToLocalStorage(cities) {
+  try {
+    // Only save essential data, not the full weather data which will be stale
+    const cityData = cities.map((city) => ({
+      id: city.id,
+      address: city.address,
+      timezone: city.timezone,
+    }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cityData));
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('Failed to save cities to localStorage:', error);
+  }
+}
+
+export function loadCitiesFromLocalStorage() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('Failed to load cities from localStorage:', error);
+  }
+  return [];
+}
+
+export function clearCitiesFromLocalStorage() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('Failed to clear cities from localStorage:', error);
+  }
+}
