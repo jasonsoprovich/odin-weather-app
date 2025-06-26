@@ -36,6 +36,64 @@ export function findDisplayedCity(predicate) {
   return displayedCities.find(predicate);
 }
 
+// Loading state management
+export function showLoadingOnCard(cardElement) {
+  if (!cardElement) return;
+
+  // Remove any existing loading overlay
+  const existingOverlay = cardElement.querySelector('.loading-overlay');
+  if (existingOverlay) {
+    existingOverlay.remove();
+  }
+
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.classList.add('loading-overlay');
+  loadingOverlay.innerHTML = `
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Loading weather data...</div>
+    </div>
+  `;
+
+  cardElement.appendChild(loadingOverlay);
+}
+
+export function hideLoadingOnCard(cardElement) {
+  if (!cardElement) return;
+
+  const loadingOverlay = cardElement.querySelector('.loading-overlay');
+  if (loadingOverlay) {
+    loadingOverlay.remove();
+  }
+}
+
+export function createPlaceholderCard(cityName) {
+  const cityCardsContainer = document.getElementById('city-cards-container');
+  const cardElement = document.createElement('div');
+  cardElement.classList.add('city-card');
+
+  // Generate a temporary ID for the placeholder
+  const tempId = `loading-${Date.now()}`;
+  cardElement.setAttribute('data-city-id', tempId);
+
+  // Create basic structure
+  cardElement.innerHTML = `
+    <div class="card-inner card-front">
+      <div class="city-info">
+        <h2 class="city-name">${cityName}</h2>
+        <div class="datetime-info">
+          <span class="loading-text">Fetching data...</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  cityCardsContainer.appendChild(cardElement);
+  showLoadingOnCard(cardElement);
+
+  return { cardElement, tempId };
+}
+
 function deleteCity(cityId, cardElement) {
   removeDisplayedCity(cityId);
   const cityName = cardElement.querySelector('.city-name').textContent;
@@ -239,11 +297,11 @@ function generateCardBackContent(cityData) {
   `;
 }
 
-export function renderCityCard(cityData) {
+export function renderCityCard(cityData, existingCardElement = null) {
   const cityCardsContainer = document.getElementById('city-cards-container');
-  let cardElement = document.querySelector(
-    `.city-card[data-city-id="${cityData.id}"]`
-  );
+  let cardElement =
+    existingCardElement ||
+    document.querySelector(`.city-card[data-city-id="${cityData.id}"]`);
 
   const wasFlipped = cardElement
     ? cardElement.classList.contains('flipped')
@@ -257,6 +315,9 @@ export function renderCityCard(cityData) {
 
     cardElement.addEventListener('click', () => toggleCardFlip(cardElement));
   }
+
+  // Hide loading overlay if it exists
+  hideLoadingOnCard(cardElement);
 
   const frontContent = generateCardFrontContent(cityData);
   const backContent = generateCardBackContent(cityData);
@@ -284,3 +345,5 @@ export function updateGlobalUnitButtonText() {
       getCurrentUnits() === UNITS.METRIC ? 'C°' : 'F°';
   }
 }
+
+// State management for displayed cities
