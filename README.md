@@ -1,49 +1,25 @@
-Webpack Starter Template
-A minimal yet powerful Webpack boilerplate configured with:
+# Climata Weather App 🌤️
 
-Babel (ES6+ support)
-ESLint (Airbnb style guide)
-Prettier (automatic code formatting)
-CSS loading
-HTML template generation
-Development & production builds (via webpack.dev.js & webpack.prod.js)
-GitHub Template-ready structure
-——————————————————————————
-Features
-Webpack 5
-Babel (@babel/preset-env) for modern JavaScript
-ESLint with eslint-config-airbnb-base + eslint-plugin-import
-Prettier for consistent formatting
-Dev Server with HMR (webpack-dev-server)
-CSS Loader & Style Loader
-HTML Webpack Plugin for HTML templating
-Config split
+A modern, responsive weather dashboard built with vanilla JavaScript and webpack. Track multiple cities with beautiful, interactive weather cards.
 
-config/webpack.common.js
-config/webpack.dev.js
-config/webpack.prod.js
+## ✨ Features
 
+- **Multi-City Dashboard** - Add and track weather for multiple cities
+- **Interactive Cards** - Click to flip cards and see detailed weather info
+- **Drag & Drop Reordering** - Organize your cities by dragging cards around
+- **Persistent Storage** - Your cities are saved and restored between sessions
+- **Responsive Design** - Works perfectly on desktop, tablet, and mobile
+- **Unit Toggle** - Switch between Celsius and Fahrenheit
+- **Real-Time Data** - Powered by Visual Crossing Weather API
 
-——————————————————————————
+## 🛠️ Built With
 
-Quick Start
+- Vanilla JavaScript (ES6+)
+- Webpack 5
+- CSS Grid & Flexbox
+- Visual Crossing Weather API
+- LocalStorage for persistence
 
+---
 
-Clone this repo as a template:
-git clone https://github.com/<your-user>/webpack-starter.git
-cd webpack-starter
-
-Install dependencies:
-npm install
-
-Start the development server (with hot reload):
-npm run start
-
-Build for production:
-npm run build
-
-Lint your code (ESLint + Airbnb rules):
-npm run lint
-
-Format code (Prettier):
-npm run format
+\*Part of The Odin
