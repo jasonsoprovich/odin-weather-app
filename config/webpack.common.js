@@ -35,6 +35,7 @@ module.exports = (env, argv) => {
         template: path.resolve(__dirname, '../src/index.html'),
         inject: 'body',
         title: 'Weather App',
+        favicon: './src/img/favicon.ico',
       }),
       new Dotenv({
         systemvars: true,
