@@ -41,11 +41,9 @@ export function findDisplayedCity(predicate) {
   return displayedCities.find(predicate);
 }
 
-// Loading state management
 export function showLoadingOnCard(cardElement) {
   if (!cardElement) return;
 
-  // Remove any existing loading overlay
   const existingOverlay = cardElement.querySelector('.loading-overlay');
   if (existingOverlay) {
     existingOverlay.remove();
@@ -77,11 +75,9 @@ export function createPlaceholderCard(cityName) {
   const cardElement = document.createElement('div');
   cardElement.classList.add('city-card');
 
-  // Generate a temporary ID for the placeholder
   const tempId = `loading-${Date.now()}`;
   cardElement.setAttribute('data-city-id', tempId);
 
-  // Create basic structure
   cardElement.innerHTML = `
     <div class="card-inner card-front">
       <div class="city-info">
@@ -320,14 +316,12 @@ export function renderCityCard(cityData, existingCardElement = null) {
 
     cardElement.addEventListener('click', () => toggleCardFlip(cardElement));
 
-    // Enable drag and drop for the new card (lazy import to avoid circular dependency)
     // eslint-disable-next-line import/no-cycle
     import('./dragDrop').then(({ enableDragAndDropForCard }) => {
       enableDragAndDropForCard(cardElement);
     });
   }
 
-  // Hide loading overlay if it exists
   hideLoadingOnCard(cardElement);
 
   const frontContent = generateCardFrontContent(cityData);
@@ -357,14 +351,11 @@ export function updateGlobalUnitButtonText() {
   }
 }
 
-// LocalStorage integration
 export function loadSavedCities() {
   return loadCitiesFromLocalStorage();
 }
 
 export function initializeDisplayedCities(cities) {
-  displayedCities.length = 0; // Clear existing array
-  displayedCities.push(...cities); // Add new cities
+  displayedCities.length = 0;
+  displayedCities.push(...cities);
 }
-
-// State management for displayed cities

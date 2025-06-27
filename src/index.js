@@ -121,7 +121,6 @@ async function loadDefaultCity() {
 }
 
 async function loadSavedCitiesWithFreshData(savedCities) {
-  // Create placeholder cards for all saved cities
   const placeholders = savedCities.map((city) => {
     const { cardElement } = createPlaceholderCard(
       city.address.split(',')[0].trim()
@@ -129,16 +128,13 @@ async function loadSavedCitiesWithFreshData(savedCities) {
     return { ...city, cardElement };
   });
 
-  // Fetch fresh weather data for all saved cities
   const weatherPromises = placeholders.map(async (placeholder) => {
     const freshData = await getWeatherData(placeholder.address);
     if (freshData) {
-      // Preserve the original ID from localStorage
       freshData.id = placeholder.id;
       placeholder.cardElement.remove();
       return freshData;
     }
-    // Remove placeholder if fetch failed
     placeholder.cardElement.remove();
     return null;
   });
@@ -146,15 +142,12 @@ async function loadSavedCitiesWithFreshData(savedCities) {
   const weatherResults = await Promise.all(weatherPromises);
   const validCities = weatherResults.filter((city) => city !== null);
 
-  // Initialize the displayed cities array with fresh data
   initializeDisplayedCities(validCities);
 
-  // Render all the city cards
   validCities.forEach((cityData) => {
     renderCityCard(cityData);
   });
 
-  // If no cities loaded successfully, fall back to default city
   if (validCities.length === 0) {
     await loadDefaultCity();
   }
@@ -164,17 +157,13 @@ async function initializeApp() {
   updateGlobalUnitButtonText();
   setupEventListeners();
 
-  // Initialize drag and drop functionality
   initializeDragAndDrop();
 
-  // Load saved cities from localStorage
   const savedCities = loadSavedCities();
 
   if (savedCities.length > 0) {
-    // Restore saved cities and fetch fresh weather data
     await loadSavedCitiesWithFreshData(savedCities);
   } else {
-    // No saved cities, load default city
     await loadDefaultCity();
   }
 }

@@ -1,3 +1,5 @@
+import { debugWarn } from './logger';
+
 export function showMessage(message) {
   const messageDiv = document.createElement('div');
   messageDiv.textContent = message;
@@ -63,12 +65,10 @@ export function appendModal(modalOverlay) {
   document.body.appendChild(modalOverlay);
 }
 
-// LocalStorage management for persistent city data
 const STORAGE_KEY = 'weather-app-cities';
 
 export function saveCitiesToLocalStorage(cities) {
   try {
-    // Only save essential data, not the full weather data which will be stale
     const cityData = cities.map((city) => ({
       id: city.id,
       address: city.address,
@@ -76,8 +76,7 @@ export function saveCitiesToLocalStorage(cities) {
     }));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cityData));
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.warn('Failed to save cities to localStorage:', error);
+    debugWarn('Failed to save cities to localStorage:', error);
   }
 }
 
@@ -88,8 +87,7 @@ export function loadCitiesFromLocalStorage() {
       return JSON.parse(stored);
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.warn('Failed to load cities from localStorage:', error);
+    debugWarn('Failed to load cities from localStorage:', error);
   }
   return [];
 }
@@ -98,13 +96,12 @@ export function clearCitiesFromLocalStorage() {
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.warn('Failed to clear cities from localStorage:', error);
+    debugWarn('Failed to clear cities from localStorage:', error);
   }
 }
 
 export function reorderDisplayedCities(displayedCities, newOrder) {
-  displayedCities.length = 0; // Clear existing array
-  displayedCities.push(...newOrder); // Add new order
+  displayedCities.length = 0;
+  displayedCities.push(...newOrder);
   saveCitiesToLocalStorage(displayedCities);
 }

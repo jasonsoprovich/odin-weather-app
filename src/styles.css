@@ -229,47 +229,98 @@ ul {
 
 .city-card[draggable='true'] {
   cursor: grab;
+  user-select: none;
 }
 
-.city-card[draggable='true']:active {
+.city-card[draggable='true']:active,
+.city-card.dragging {
   cursor: grabbing;
 }
 
 .city-card.dragging {
   opacity: 0.5;
-  transform: rotate(5deg) scale(1.05);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  transform: rotate(3deg) scale(1.05);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
   z-index: 1000;
+  transition: none;
 }
 
 .city-card.drag-over {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(0, 122, 204, 0.3);
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 6px 20px rgba(0, 122, 204, 0.25);
   border: 2px solid var(--color-accent);
+  transition: all 0.15s ease;
+}
+
+.city-card.drag-adjacent {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 122, 204, 0.15);
+  border: 1px solid rgba(0, 122, 204, 0.3);
+  transition: all 0.2s ease;
 }
 
 .drag-placeholder {
   width: 350px;
   height: 500px;
-  border: 3px dashed var(--color-accent);
+  border: 4px dashed var(--color-accent);
   border-radius: 15px;
-  background: rgba(0, 122, 204, 0.1);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 122, 204, 0.15),
+    rgba(0, 122, 204, 0.08)
+  );
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-accent);
   font-size: 1.1rem;
-  font-weight: 600;
-  opacity: 0.7;
-  transition: all 0.2s ease;
+  font-weight: 700;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+  animation: placeholderPulse 1.2s ease-in-out infinite;
+  box-sizing: border-box;
+  position: relative;
+}
+
+@keyframes placeholderPulse {
+  0%,
+  100% {
+    opacity: 0.9;
+    transform: scale(1);
+    border-color: var(--color-accent);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.98);
+    border-color: rgba(0, 122, 204, 0.7);
+  }
 }
 
 .drag-placeholder::before {
-  content: 'Drop here to reorder';
+  content: 'Drop here';
+  z-index: 1;
+}
+
+.drag-placeholder::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--color-accent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.6;
 }
 
 .city-card:hover:not(.dragging) {
   transform: translateY(-2px);
+}
+
+.city-card[draggable='true']:hover:not(.dragging) {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 6px 20px var(--card-shadow-hover);
 }
 
 .card-inner {
